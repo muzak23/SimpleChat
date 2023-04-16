@@ -1,31 +1,41 @@
 import os
 
 from flask import Flask
-from flask_bootstrap import Bootstrap
 from flask_socketio import SocketIO
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
 
 from dotenv import load_dotenv
 
 socketio = SocketIO()
+db = SQLAlchemy()
+login_manager = LoginManager()
 
 
 def create_app():
     app = Flask(__name__)
-    Bootstrap(app)
 
     load_dotenv()
     if os.getenv('SECRET_KEY') is None:
         raise ValueError('SECRET_KEY is not set in .env')
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
-    # blueprint for non-chat pages (index, about, etc)
-    from .main import main as main_blueprint
-    app.register_blueprint(main_blueprint)
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 
-    # blueprint for chat pages
-    from .chat import chat as chat_blueprint
-    app.register_blueprint(chat_blueprint)
+    db.init_app(app)
+    # login_manager.init_app(app)
 
-    socketio.init_app(app)
-    return app
+    with app.app_context():
+        # blueprint for non-chat pages (index, about, etc)
+        from .main import main as main_blueprint
+        app.register_blueprint(main_blueprint)
+
+        # blueprint for chat pages
+        from .chat import chat as chat_blueprint
+        app.register_blueprint(chat_blueprint)
+
+        socketio.init_app(app)
+        db.create_all()
+
+        return app
 
