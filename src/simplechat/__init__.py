@@ -7,7 +7,11 @@ from flask_login import LoginManager
 
 from dotenv import load_dotenv
 
-socketio = SocketIO(manage_sessions=False)
+import eventlet
+eventlet.monkey_patch()
+
+
+socketio = SocketIO(manage_sessions=False, cors_allowed_origins='*', async_mode='eventlet')
 db = SQLAlchemy()
 login_manager = LoginManager()
 
