@@ -12,32 +12,64 @@
     {% block login_pane %}
     {% endblock %}
 {% endif %}
+<section style="background-color: #eee;">
+  <div class="container py-5">
 
-<h1 class="title">{{ room }} Chatroom</h1>
+    <div class="row d-flex justify-content-center">
+      <div class="col-10">
 
-<div class="container">
-    <div class="row-9">
-        <div id="messages" class="chat_stream">
-        </div>
-        <div class="send_message">
-            {% if current_user.is_authenticated %}
-            <p>Sending message as <b>{{ current_user.username }}</b></p>
-            {% endif %}
+<div class="card" id="chat2">
+  <div class="card-header d-flex justify-content-between align-items-center p-3">
+    <h5 class="mb-0">{{ room }} Chatroom</h5>
+    <button type="button" class="btn btn-secondary btn-sm" data-mdb-ripple-color="dark">Log Out</button>
+  </div>
+  <div id="messages" class="card-body overflow-auto" data-mdb-perfect-scrollbar="true" style="position: relative; height: 400px">
+
+{#    <div class="d-flex flex-row justify-content-start">#}
+{#      <img src="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50"#}
+{#        alt="avatar 1" style="width: 45px; height: 100%;" class="rounded">#}
+{#      <div>#}
+{#        <p class="small p-2 ms-3 mb-1 rounded-3" style="background-color: #d7d7d7;">Hi</p>#}
+{#        <p class="small ms-3 mb-3 rounded-3 text-muted">23:58</p>#}
+{#        </div>#}
+{#    </div>#}
+  </div>
+<div class="card-footer">
+        <div class="input-group">
             <form id="messageForm">
-                <input id="message" type="text" />
-                <input class="btn btn-primary" type="submit" value="Send" />
+                <input id="message" type="text" class="form-control" placeholder="Type your message here..."/>
+                <input class="btn btn-primary" type="submit" value="Send"/>
             </form>
         </div>
-    </div>
-    <div class="row-3">
-        <div class="chat_users">
-            <h3>Users in {{ room }}:</h3>
-            <ul>
-                <li>Logan</li>
-            </ul>
-        </div>
-    </div>
 </div>
+{#<div class="container">#}
+{#    <div class="row-9">#}
+{#        <div id="messages" class="chat_stream">#}
+{#        </div>#}
+{#        <div class="send_message">#}
+{#            {% if current_user.is_authenticated %}#}
+{#            <p>Sending message as <b>{{ current_user.username }}</b></p>#}
+{#            {% endif %}#}
+{#            <form id="messageForm">#}
+{#                <input id="message" type="text" />#}
+{#                <input class="btn btn-primary" type="submit" value="Send" />#}
+{#            </form>#}
+{#        </div>#}
+{#    </div>#}
+{#    #}
+{#    <div class="row-3">#}
+{#        <div class="chat_users">#}
+{#            <h3>Users in {{ room }}:</h3>#}
+{#            <ul>#}
+{#                <li>Logan</li>#}
+{#            </ul>#}
+{#        </div>#}
+{#    </div>#}
+</div>
+</div>
+</div>
+</div>
+</section>
 </body>
 {% endblock %}
 </html>
