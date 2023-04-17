@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+{%  block login_pane %}
+    <script type="text/javascript" src="{{ url_for('static', filename='login.js')}}"></script>
+
+  <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="onload" tabindex="-1" >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            Login
+          </h5>
+        </div>
+        <form method="post" id="loginForm">
+            <div id="error" class="alert alert-danger" hidden></div>
+            <div class="input-group">
+                <span class="input-group-text">Username</span>
+                <input type="text" class="form-control" id="loginUsername" aria-label="Username" aria-describedby="basic-addon4">
+            </div>
+              <div class="form-text" id="basic-addon4">Usernames must be between 3 and 21 characters long and can only contain letters, numbers, and spaces</div>
+
+            <div class="modal-footer d-flex justify-content-between">
+        <input class="btn btn-secondary" value="Generate random name" type="button" onclick="generateRandomName()"/>
+          <input class="btn btn-primary" type="submit" value="Join"/>
+            </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+</html>

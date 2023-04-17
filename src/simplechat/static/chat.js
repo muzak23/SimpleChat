@@ -1,6 +1,7 @@
 function onDOMContentLoaded(evt) {
     domStream = document.getElementById('messages');
-    document.getElementById('inputForm').addEventListener('submit', onSubmit, false);
+    document.getElementById('messageForm').addEventListener('submit', onMessageSubmit, false);
+
     showHistory();
 }
 document.addEventListener('DOMContentLoaded', onDOMContentLoaded, false);
@@ -19,14 +20,13 @@ function createMessageDOM(msg) {
     let h3 = document.createElement('h3');
     h3.className = 'message-author';
     debug = msg['username']
-    console.log(debug)
-    h3.innerHTML = debug
+    h3.textContent = debug
 
     html.appendChild(h3);
 
     let p = document.createElement('p');
     p.className = 'message_text';
-    p.innerHTML = msg['text'];
+    p.textContent = msg['text'];
     html.appendChild(p);
 
     return html;
@@ -37,7 +37,8 @@ function showMsg(msg) {
 }
 
 const socket = io();
-socket.on('connect', function() {
+socket.on('connect', function(data) {
+    console.log('connected with data:', data);
     socket.emit('my event', {data: "I'm connected!"});
 });
 
@@ -53,7 +54,7 @@ function sendMessage(message) {
     socket.emit('message', message);
 }
 
-function onSubmit(evt) {
+function onMessageSubmit(evt) {
     sendMessage(document.getElementById('message').value);
     document.getElementById('message').value = '';
     // prevent default
@@ -75,5 +76,3 @@ function getUsername(id) {
         return data
     })
 }
-
-

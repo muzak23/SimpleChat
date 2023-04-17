@@ -7,7 +7,7 @@ from flask_login import LoginManager
 
 from dotenv import load_dotenv
 
-socketio = SocketIO()
+socketio = SocketIO(manage_sessions=False)
 db = SQLAlchemy()
 login_manager = LoginManager()
 
@@ -23,7 +23,7 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 
     db.init_app(app)
-    # login_manager.init_app(app)
+    login_manager.init_app(app)
 
     with app.app_context():
         # blueprint for non-chat pages (index, about, etc)

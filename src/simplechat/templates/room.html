@@ -2,70 +2,41 @@
 <html lang="en">
 {%  extends "base.html" %}
 {% block body %}
+    <script type="text/javascript" src="{{ url_for('static', filename='chat.js')}}"></script>
+
 <body>
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        ...
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
-    </div>
-  </div>
-</div>
 
+{# Pop up a modal if the user is not logged in #}
+{% if not current_user.is_authenticated %}
+    {% include "login_pane.html" %}
+    {% block login_pane %}
+    {% endblock %}
+{% endif %}
 
-<h1>{{ room }} Chatroom</h1>
-<div class="d-flex flex-column chat_window">
-    <div id="chat" class="align-self-center">
-        <div class="message">
-            <p class="message_text">Welcome to the {{ room }} chatroom!</p>
+<h1 class="title">{{ room }} Chatroom</h1>
+
+<div class="container">
+    <div class="row-9">
+        <div id="messages" class="chat_stream">
+        </div>
+        <div class="send_message">
+            {% if current_user.is_authenticated %}
+            <p>Sending message as <b>{{ current_user.username }}</b></p>
+            {% endif %}
+            <form id="messageForm">
+                <input id="message" type="text" />
+                <input class="btn btn-primary" type="submit" value="Send" />
+            </form>
         </div>
     </div>
-{#    <div class="d-flex flex-row justify-content-between">#}
-{#        <div class="d-flex flex-row">#}
-{#            <p>Logged in as <b>Logan</b></p>#}
-{#            <button id="logout">Logout</button>#}
-{#        </div>#}
-{#        <div class="d-flex flex-row">#}
-{#            <p>Room: <b>{{ room }}</b></p>#}
-{#            <button id="change_room">Change Room</button>#}
-{#        </div>#}
-{#    </div>#}
-{#<div class="d-flex flex-row justify-content-between">#}
-{#        <div class="d-flex flex-row">#}
-{#            <p>Users in room:</p>#}
-{#            <ul id="users">#}
-{#                <li>Logan</li>#}
-{#            </ul>#}
-{#        </div>#}
-{#    </div>#}
-{#    chat stream   #}
-    <div id="messages" class="chat_stream">
-        <div class="message ">
-            <img src="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50" alt="User Avatar">
-            <h3 class="message-author">Logan</h3>
-            <p class="message_text">Welcome to the {{ room }} chatroom!</p>
+    <div class="row-3">
+        <div class="chat_users">
+            <h3>Users in {{ room }}:</h3>
+            <ul>
+                <li>Logan</li>
+            </ul>
         </div>
     </div>
-
-    <div class="send_message flex-row">
-        <p>Sending message as <b>Logan</b></p>
-        <form id="inputForm">
-            <input id="message" type="text" />
-            <input type="submit" value="Send" />
-        </form>
-    </div>
-
-
 </div>
 </body>
 {% endblock %}
