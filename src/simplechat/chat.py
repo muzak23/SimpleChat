@@ -6,6 +6,7 @@ from . import socketio
 from flask import Blueprint, request, render_template
 
 from flask_login import login_required, logout_user, current_user, login_user
+from flask_socketio import join_room, leave_room
 
 from . import db, login_manager
 from .models import User, Message
@@ -25,9 +26,20 @@ def room(room):
 def connect_handler():
     print(f'{current_user} is trying to connect')
     if current_user.is_authenticated:
+        data = {'id': current_user.id, 'username': current_user.username}
+        socketio.emit('connected', data)
         return current_user
     else:
-        return -1
+        socketio.emit('disconnect')
+
+# @socketio.on('join')
+# def on_join(room):
+#     print('User ' + current_user.username + ' has entered the room ' + room + '.')
+#     username = current_user.username
+#     join_room(room)
+#     socketio.emit(username + ' has entered the room.', room=room)
+#
+
 @login_manager.user_loader
 def load_user(user_id):
     if user_id is not None:
@@ -37,20 +49,31 @@ def load_user(user_id):
 @socketio.on('message')
 def handle_message(message_text):
     print('received message: ' + str(message_text))
+    if current_user.is_authenticated is False:
+        print('user is not authenticated')
+        return 'notAuthenticated'
+    if str(message_text).isspace() or message_text == '':
+        print('message is empty')
+        return 'emptyMessage'
     message_text = message_text.strip()
     message = Message(user_id=current_user.id, text=message_text)
     db.session.add(message)
     db.session.commit()
-    socketio.emit('newMessage', message.to_dict(), broadcast=True)
+    print('responding with ' + str(message.to_dict()))
+    socketio.emit('newMessage', message.to_dict(), include_self=False)
+    print('emitted newMessage')
     return 'messageReceived'
 
 
+
 @socketio.on('getHistory')
-def handle_getHistory(before=None):
-    if before is None:
-        chat_history = Message.query.order_by(Message.timestamp.desc()).limit(20).all()
-    else:
+def handle_getHistory(before=None, after=None):
+    if before:
         chat_history = Message.query.filter(Message.timestamp < before).order_by(Message.timestamp.desc()).limit(20).all()
+    elif after:
+        chat_history = Message.query.filter(Message.timestamp > after).order_by(Message.timestamp.desc()).limit(20).all()
+    else:
+        chat_history = Message.query.order_by(Message.timestamp.desc()).limit(20).all()
     print(chat_history)
     chat_history = [message.to_dict() for message in chat_history]
     print(chat_history)
@@ -103,5 +126,14 @@ def login():
         login_user(user)
         print('Created new user: ' + str(user))
         return '1'  # User created
+    elif not user.persistent:
+        login_user(user)
+        print('Logged in user: ' + str(user))
+        return '0'  # User logged in
     else:
         return '-2'  # User already exists
+
+@socketio.on('logout')
+def handle_logout():
+    logout_user()
+    return 'Logged out'

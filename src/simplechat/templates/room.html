@@ -3,7 +3,7 @@
 {%  extends "base.html" %}
 {% block body %}
     <script type="text/javascript" src="{{ url_for('static', filename='chat.js')}}"></script>
-
+    <script type="text/javascript">join('{{ room }}')</script>
 <body>
 
 {# Pop up a modal if the user is not logged in #}
@@ -12,16 +12,17 @@
     {% block login_pane %}
     {% endblock %}
 {% endif %}
+
 <section style="background-color: #eee;">
   <div class="container py-5">
 
     <div class="row d-flex justify-content-center">
-      <div class="col-10">
+      <div class="col-12">
 
 <div class="card" id="chat2">
   <div class="card-header d-flex justify-content-between align-items-center p-3">
     <h5 class="mb-0">{{ room }} Chatroom</h5>
-    <button type="button" class="btn btn-secondary btn-sm" data-mdb-ripple-color="dark">Log Out</button>
+    <button type="button" class="btn btn-secondary btn-sm" data-mdb-ripple-color="dark" onclick="logout()">Log Out</button>
   </div>
   <div id="messages" class="card-body overflow-auto" data-mdb-perfect-scrollbar="true" style="position: relative; height: 400px">
 
@@ -36,9 +37,13 @@
   </div>
 <div class="card-footer">
         <div class="input-group">
-            <form id="messageForm">
-                <input id="message" type="text" class="form-control" placeholder="Type your message here..."/>
-                <input class="btn btn-primary" type="submit" value="Send"/>
+            <form id="messageForm" class="row">
+                    <div class="col-11">
+                        <input class="form-control" id="message" type="text" placeholder="Type your message here..."/>
+                    </div>
+                    <div class="col-1">
+                        <input class="btn btn-primary" type="submit" value="Send"/>
+                    </div>
             </form>
         </div>
 </div>

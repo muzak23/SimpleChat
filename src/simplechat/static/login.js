@@ -42,6 +42,8 @@ function login(username) {
                 error.innerHTML = '<strong>Username already taken</strong> Please choose a different username'
             } else if (data === '1') {
                 $('#onload').modal('hide');
+                localStorage.setItem("username", username);
+                reconnect();
             }
         }
       })
