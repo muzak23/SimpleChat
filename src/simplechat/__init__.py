@@ -38,6 +38,10 @@ def create_app():
         from .chat import chat as chat_blueprint
         app.register_blueprint(chat_blueprint)
 
+        # blueprint for HTTPS authentication
+        from .auth import auth as auth_blueprint
+        app.register_blueprint(auth_blueprint)
+
         socketio.init_app(app)
         db.create_all()
 

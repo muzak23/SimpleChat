@@ -1,9 +1,6 @@
-import random
-import re
-
 from . import socketio
 
-from flask import Blueprint, request, render_template
+from flask import Blueprint, render_template
 
 from flask_login import login_required, logout_user, current_user, login_user
 from flask_socketio import join_room, leave_room
@@ -30,7 +27,20 @@ def connect_handler():
         socketio.emit('connected', data)
         return current_user
     else:
-        socketio.emit('disconnect')
+        print('user is not authenticated')
+        # socketio.emit('notAuthenticated')
+        socketio.emit('disconnect', 'notAuthenticated')
+        # socketio.disconnect()
+
+# @socketio.on('reconnect')
+# def reconnect_handler():
+#     print(f'{current_user} is trying to reconnect')
+#     if current_user.is_authenticated:
+#         data = {'id': current_user.id, 'username': current_user.username}
+#         socketio.emit('reconnected', data)
+#         return current_user
+#     else:
+#         socketio.emit('disconnect')
 
 # @socketio.on('join')
 # def on_join(room):
@@ -51,10 +61,12 @@ def handle_message(message_text):
     print('received message: ' + str(message_text))
     if current_user.is_authenticated is False:
         print('user is not authenticated')
+        # socketio.emit('notAuthenticated')
         return 'notAuthenticated'
-    if str(message_text).isspace() or message_text == '':
-        print('message is empty')
-        return 'emptyMessage'
+    if message_text is None or str(message_text).isspace() or message_text == ''\
+            or len(message_text) > 1000:
+        print('message is invalid')
+        return 'invalidMessage'
     message_text = message_text.strip()
     message = Message(user_id=current_user.id, text=message_text)
     db.session.add(message)
@@ -92,46 +104,6 @@ def handle_newUser(username):
     db.session.commit()
     return user.id
 
-
-@socketio.on('generateRandomName')
-def handle_generateRandomName():
-    print('Generating random name...')
-    return random.choice(NAMES_ADJECTIVE) + ' ' + random.choice(NAMES_NOUN)
-
-
-# @socketio.on('login')
-# def handle_login(username):
-#     print('Logging in user: ' + str(username))
-#     user = User.query.filter_by(username=username).first()
-#     if user is None:
-#         user = User(username=username)
-#         db.session.add(user)
-#         db.session.commit()
-#     login_user(user)
-#     return user.id
-
-@chat.route('/login', methods=['POST'])
-def login():
-    username = request.form['username']
-    print('Logging in user: ' + str(username))
-    username = username.strip()
-    username = re.sub(' {2,}', ' ', username)
-    if username == '' or re.match('[a-zA-Z ]+$', username) is None or 3 > len(username) > 21:
-        return '-1'  # Invalid username
-    user = User.query.filter_by(username=username).first()
-    if user is None:
-        user = User(username=username)
-        db.session.add(user)
-        db.session.commit()
-        login_user(user)
-        print('Created new user: ' + str(user))
-        return '1'  # User created
-    elif not user.persistent:
-        login_user(user)
-        print('Logged in user: ' + str(user))
-        return '0'  # User logged in
-    else:
-        return '-2'  # User already exists
 
 @socketio.on('logout')
 def handle_logout():

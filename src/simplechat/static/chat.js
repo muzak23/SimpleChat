@@ -1,10 +1,15 @@
 function onDOMContentLoaded(evt) {
     chatStream = document.getElementById('messages');
     document.getElementById('messageForm').addEventListener('submit', onMessageSubmit, false);
+    attemptConnect();
+}
+
+function attemptConnect() {
+    socket.connect();
     showHistory();
-    scrollToBottom();
 
 }
+
 document.addEventListener('DOMContentLoaded', onDOMContentLoaded, false);
 
 function scrollToBottom() {
@@ -105,12 +110,17 @@ function onMessageSubmit(evt) {
     // prevent default
     evt.preventDefault();
 
-    messages.scrollTop = messages.scrollHeight - messages.getBoundingClientRect().height;
+    scrollToBottom();
     socket.timeout(5000).emit('message', message, function (err, callback) {
-        if (err) {
-            console.log('message error', err);
+        if (err || callback === 'invalidMessage') {
+            console.log('message error', err, callback);
             new_message.children[1].children[1].children[0].style.color = 'red';
-        } else {
+        } else if (callback === 'notAuthenticated') {
+            new_message.children[1].children[1].children[0].style.color = 'red';
+            const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+            loginModal.show();
+        }
+        else {
             console.log('message returns', callback);
             new_message.children[1].children[1].children[0].style.color = 'black';
         }
@@ -146,9 +156,15 @@ socket.on('connected', function(data) {
     localStorage.setItem('username', data['username']);
 });
 
-socket.on('disconnect', function() {
-    console.log('disconnected');
-})
+socket.on('disconnect', (data) => {
+    if (data === 'notAuthenticated') {
+        const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+        loginModal.show();
+    }
+    console.log('disconnect because = ', data);
+    // Disconnect socket
+    socket.disconnect();
+});
 
 function reconnect() {
     socket.emit('reconnect', function (data) {
@@ -161,8 +177,3 @@ function logout() {
         console.log('logout returns', data)
     });
 }
-
-socket.on('notAuthenticated', function() {
-    console.log('notAuthenticated');
-    window.location.href = '/login';
-})

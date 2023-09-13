@@ -6,12 +6,9 @@
     <script type="text/javascript">join('{{ room }}')</script>
 <body>
 
-{# Pop up a modal if the user is not logged in #}
-{% if not current_user.is_authenticated %}
-    {% include "login_pane.html" %}
-    {% block login_pane %}
-    {% endblock %}
-{% endif %}
+{% include "login_pane.html" %}
+{% block login_pane %}
+{% endblock %}
 
 <section style="background-color: #eee;">
   <div class="container py-5">

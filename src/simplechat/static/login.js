@@ -1,8 +1,6 @@
 function onDOMContentLoaded(evt) {
     document.getElementById('loginForm').addEventListener('submit', onLoginSubmit, false);
 
-    const myModal = new bootstrap.Modal('#onload');
-    myModal.show();
 }
 document.addEventListener('DOMContentLoaded', onDOMContentLoaded, false);
 
@@ -15,14 +13,6 @@ function onLoginSubmit(evt) {
 }
 
 function login(username) {
-    // socket.emit('login', username, function (data) {
-    //     console.log('login returns', data)
-    //     if (data) {
-    //         document.getElementById('loginUsername').value = username
-    //         const myModal = new bootstrap.Modal('#onload');
-    //         myModal.hide();
-    //     }
-    // });
     $.ajax({
         type:'POST',
         url:'/login',
@@ -40,10 +30,10 @@ function login(username) {
                 let error = document.getElementById('error')
                 error.hidden = false
                 error.innerHTML = '<strong>Username already taken</strong> Please choose a different username'
-            } else if (data === '1') {
-                $('#onload').modal('hide');
+            } else if (data === '1' || data === '0') {
+                $('#loginModal').modal('hide');
                 localStorage.setItem("username", username);
-                reconnect();
+                attemptConnect();
             }
         }
       })
@@ -51,7 +41,12 @@ function login(username) {
 }
 
 function generateRandomName() {
-    socket.emit('generateRandomName', function (data) {
-        document.getElementById('loginUsername').value = data
+    $.ajax({
+        type:'GET',
+        url:'/generateRandomName',
+        success:function(data) {
+            console.log('generateRandomName returns', data)
+            document.getElementById('loginUsername').value = data
+        }
     })
 }
