@@ -1,9 +1,11 @@
+from datetime import datetime
+
 from . import socketio
 
 from flask import Blueprint, render_template
 
 from flask_login import login_required, logout_user, current_user, login_user
-from flask_socketio import join_room, leave_room
+from flask_socketio import emit, join_room, leave_room
 
 from . import db, login_manager
 from .models import User, Message
@@ -24,13 +26,11 @@ def connect_handler():
     print(f'{current_user} is trying to connect')
     if current_user.is_authenticated:
         data = {'id': current_user.id, 'username': current_user.username}
-        socketio.emit('connected', data)
+        emit('connected', data)
         return current_user
     else:
         print('user is not authenticated')
-        # socketio.emit('notAuthenticated')
-        socketio.emit('disconnect', 'notAuthenticated')
-        # socketio.disconnect()
+        emit('disconnect', 'notAuthenticated')
 
 # @socketio.on('reconnect')
 # def reconnect_handler():
@@ -80,15 +80,18 @@ def handle_message(message_text):
 
 @socketio.on('getHistory')
 def handle_getHistory(before=None, after=None):
+    print('getting history')
     if before:
+        print('before' + str(before))
+        before = datetime.fromtimestamp(int(before))
         chat_history = Message.query.filter(Message.timestamp < before).order_by(Message.timestamp.desc()).limit(20).all()
     elif after:
+        print('after' + str(after))
         chat_history = Message.query.filter(Message.timestamp > after).order_by(Message.timestamp.desc()).limit(20).all()
     else:
+        print('else')
         chat_history = Message.query.order_by(Message.timestamp.desc()).limit(20).all()
-    print(chat_history)
     chat_history = [message.to_dict() for message in chat_history]
-    print(chat_history)
     return chat_history
 
 

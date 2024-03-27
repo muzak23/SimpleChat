@@ -22,10 +22,9 @@ def handle_generateRandomName():
 @auth.route('/login', methods=['POST'])
 def login():
     username = request.form['username']
-    print('Logging in user: ' + str(username))
     username = username.strip()
     username = re.sub(' {2,}', ' ', username)
-    if username == '' or re.match('[a-zA-Z ]+$', username) is None or not 3 < len(username) < 21:
+    if username == '' or re.match('[a-zA-Z0-9 ]+$', username) is None or not 3 < len(username) < 21:
         return '-1'  # Invalid username
     user = User.query.filter_by(username=username).first()
     if user is None:

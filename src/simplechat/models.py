@@ -1,6 +1,6 @@
 from . import db
 
-from datetime import datetime
+from datetime import datetime, timezone
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from flask_login import UserMixin
@@ -37,7 +37,7 @@ class Message(db.Model):
             'username': self.author.username,
             'room_id': self.room_id,
             'text': self.text,
-            'timestamp': self.timestamp.utctimetuple()
+            'timestamp': int(self.timestamp.replace(tzinfo=timezone.utc).timestamp())
         }
 
 

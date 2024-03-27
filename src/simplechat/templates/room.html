@@ -21,7 +21,7 @@
     <h5 class="mb-0">{{ room }} Chatroom</h5>
     <button type="button" class="btn btn-secondary btn-sm" data-mdb-ripple-color="dark" onclick="logout()">Log Out</button>
   </div>
-  <div id="messages" class="card-body overflow-auto" data-mdb-perfect-scrollbar="true" style="position: relative; height: 400px">
+  <div id="messages" class="card-body overflow-auto" data-mdb-perfect-scrollbar="true" onscroll="onScroll()" style="position: relative; height: 400px">
 
 {#    <div class="d-flex flex-row justify-content-start">#}
 {#      <img src="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50"#}

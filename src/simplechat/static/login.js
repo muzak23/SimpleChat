@@ -17,7 +17,7 @@ function login(username) {
         type:'POST',
         url:'/login',
         data:{
-          username:username
+            username:username
         },
         success:function(data)
         {

@@ -1,16 +1,40 @@
+/**
+ * Once the DOM is loaded, get the chat stream element and add an event
+ * listener to the message send button
+ * @param evt  The DOMContentLoaded event
+ */
 function onDOMContentLoaded(evt) {
     chatStream = document.getElementById('messages');
     document.getElementById('messageForm').addEventListener('submit', onMessageSubmit, false);
     attemptConnect();
 }
 
+document.addEventListener('DOMContentLoaded', onDOMContentLoaded, false);
+
+/**
+ * On scroll, if the user is at the top or bottom of the chat history, load more.
+ * If a limit is reached, stop loading more.
+ * @param evt  The scroll event
+ */
+function onScroll(evt) {
+    if (chatStream.scrollTop === 0 && chatStream.children[0].id !== 'loading' && chatStream.children[0].id !== 'limit') {
+        $('#messages').prepend('<div class="spinner-border text-primary" role="status" id="loading"><span class="visually-hidden">Loading...</span></div>');
+        showHistory(chatStream.getElementsByTagName('message')[0].getAttribute('data-timestamp'));
+        $('#loading').remove();
+
+    }
+}
+
+
+/**
+ * Attempts to connect to the server, and if successful, shows the chat history
+ */
 function attemptConnect() {
     socket.connect();
+    console.log('attempting to connect')
     showHistory();
 
 }
-
-document.addEventListener('DOMContentLoaded', onDOMContentLoaded, false);
 
 function scrollToBottom() {
     const out = document.getElementById("messages");
@@ -20,7 +44,46 @@ function scrollToBottom() {
 
 
 currentRoom = '';
+function sameDay(date1, date2) {
+    return date1.getFullYear() === date2.getFullYear() &&
+    date1.getMonth() === date2.getMonth() &&
+    date1.getDate() === date2.getDate();
+}
+/**
+ * Formats epoch time into a string
+ * @param epoch The epoch time
+ * @returns {string} The formatted time
+ */
+function formatTime(epoch) {
+    let message_date = new Date(epoch * 1000);
+    let today = new Date();
 
+    // is it today
+    let isToday = sameDay(message_date, today)
+    // is it yesterday
+    today.setDate(message_date.setDate(message_date.getDate()+1))
+    let isYesterday = sameDay(message_date, today)
+
+    // Format example:   1:12 PM
+    let time = (message_date.getHours() > 12 ? message_date.getHours() - 12 : message_date.getHours()) + ":" + message_date.getMinutes() + " " + (message_date.getHours() >= 12 ? "PM" : "AM");
+
+    if (isToday) {
+        return "Today at " + time;
+    }
+    else if (isYesterday) {
+        return "Yesterday at " + time;
+    }
+    else {
+        return message_date.getDay() + "/" + message_date.getMonth() + "/" + message_date.getFullYear() + " at " + time;
+    }
+}
+
+/**
+ *
+ * @param msg The formatted message data
+ * @param isSelf If the message is written by the current user
+ * @returns {HTMLDivElement} The HTML element for the message
+ */
 function createMessageHTML(msg, isSelf = false) {
     //     <div className="d-flex flex-row justify-content-start">
     //       <img src="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50"
@@ -31,8 +94,9 @@ function createMessageHTML(msg, isSelf = false) {
     //         </div>
     //     </div>
 
-    let html = document.createElement('div');
+    let html = document.createElement('message');
     html.className = 'd-flex flex-row justify-content-start';
+    html.setAttribute('data-timestamp', msg['timestamp'])
 
     let img = document.createElement('img');
     img.src = 'https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50';
@@ -61,18 +125,29 @@ function createMessageHTML(msg, isSelf = false) {
     div2.appendChild(p1);
 
     div.appendChild(div2)
-    // let p2 = document.createElement('p');
-    // p2.className = 'small ms-3 mb-3 rounded-3 text-muted';
-    // p2.textContent = msg['time'];
-    // div.appendChild(p2);
+    let p2 = document.createElement('p');
+    p2.className = 'small ms-3 mb-3 rounded-3 text-muted';
+    p2.textContent = formatTime(msg['timestamp']);
+    div.appendChild(p2);
 
     html.appendChild(div);
 
     return html;
 }
 
-function showMsg(msg) {
+/**
+ * Formats the message data into HTML and adds it to the 'messages' div
+ * @param msg The message data
+ * @param atTop Whether to add the message to the top of the chat history
+ */
+function showMsg(msg, atTop = false) {
     let messages = document.getElementById('messages');
+    if (atTop) {
+        scrollTop = messages.scrollTop;
+        messages.prepend(createMessageHTML(msg));
+        messages.scrollTop = scrollTop + messages.children[0].getBoundingClientRect().height;
+        return;
+    }
     let isAtBottom = messages.scrollHeight - messages.clientHeight <= messages.scrollTop + 1;
     messages.appendChild(createMessageHTML(msg));
     if (isAtBottom) {
@@ -101,7 +176,8 @@ function onMessageSubmit(evt) {
     let message = document.getElementById('message').value;
     let full_message = {
         'username': localStorage.getItem('username'),
-        'text': message
+        'text': message,
+        'timestamp': Date.now() / 1000
     }
     let messages = document.getElementById('messages');
     let new_message = createMessageHTML(full_message, true);
@@ -128,12 +204,62 @@ function onMessageSubmit(evt) {
     return false;
 }
 
-function showHistory() {
-    socket.emit('getHistory', function (data) {
-        for (const msg of data.reverse()) {
-            showMsg(msg)
-    }})
+/**
+ * Adds an element that lets us know we have reached the limit of the chat history
+ * @param top
+ * @param remove
+ */
+function reachedLimit(top=false, remove=false) {
+    console.log('reached limit')
+    let messages = document.getElementById('messages');
+    if (remove) {
+        let limit = document.getElementById('limit');
+        messages.removeChild(limit);
+        return;
+    }
+    if (top) {
+        let limit = document.createElement('div');
+        limit.className = 'text-center';
+        limit.id = 'limit';
+        limit.textContent = 'This is the beginning of the chat history';
+        messages.prepend(limit);
+    } else {
+        messages.appendChild(limit);
+    }
+}
 
+/**
+ * Requests chat history from a current time and then creates HTML elements for each message in the correct place
+ * @param before The time to get messages before
+ * @param after The time to get messages after
+ */
+function showHistory(before=undefined, after=undefined) {
+    socket.emit('getHistory', before, after, function (data) {
+        if (before === undefined && after === undefined) {
+            for (const msg of data.reverse()) {
+                showMsg(msg)
+            }
+            if (data.length < 20) {
+                reachedLimit(true);
+            }
+        } else if (before !== undefined) {
+            console.log('gothistory of before', before, data)
+            for (const msg of data) {
+                showMsg(msg, true)
+            }
+            if (data.length < 20) {
+                console.log('got history then reached top limit')
+                reachedLimit(true);
+            }
+        } else if (after !== undefined) {
+            for (const msg of data.reverse()) {
+                showMsg(msg)
+            }
+            // if (data.length < 20) {
+            //     reachedLimit();
+            // }
+        }
+    })
 }
 
 function getUsername(id) {
