@@ -25,7 +25,7 @@ class Message(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     room_id = db.Column(db.Integer, db.ForeignKey('room.id'))
     text = db.Column(db.String(256))
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    timestamp = db.Column(db.DateTime, index=True, default=lambda: datetime.now(timezone.utc))
 
     def __repr__(self):
         return f'id={self.id},user_id={self.user_id},room_id={self.room_id},text={self.text},timestamp={self.timestamp}'
