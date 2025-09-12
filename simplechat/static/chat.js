@@ -25,7 +25,6 @@ function onScroll(evt) {
     }
 }
 
-
 /**
  * Attempts to connect to the server, and if successful, shows the chat history
  */
@@ -42,13 +41,13 @@ function scrollToBottom() {
     out.scrollTop = out.scrollHeight - out.clientHeight;
 }
 
-
 currentRoom = '';
 function sameDay(date1, date2) {
     return date1.getFullYear() === date2.getFullYear() &&
     date1.getMonth() === date2.getMonth() &&
     date1.getDate() === date2.getDate();
 }
+
 /**
  * Formats epoch time into a string
  * @param epoch The epoch time
@@ -79,7 +78,7 @@ function formatTime(epoch) {
 }
 
 /**
- *
+ * Creates an HTML element for a message
  * @param msg The formatted message data
  * @param isSelf If the message is written by the current user
  * @returns {HTMLDivElement} The HTML element for the message

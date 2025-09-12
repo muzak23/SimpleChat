@@ -4,8 +4,8 @@ from . import socketio
 
 from flask import Blueprint, render_template
 
-from flask_login import login_required, logout_user, current_user, login_user
-from flask_socketio import emit, join_room, leave_room
+from flask_login import logout_user, current_user
+from flask_socketio import emit
 
 from . import db, login_manager
 from .models import User, Message
@@ -32,6 +32,7 @@ def connect_handler():
         print('user is not authenticated')
         emit('disconnect', 'notAuthenticated')
 
+
 # @socketio.on('reconnect')
 # def reconnect_handler():
 #     print(f'{current_user} is trying to reconnect')
@@ -42,6 +43,7 @@ def connect_handler():
 #     else:
 #         socketio.emit('disconnect')
 
+
 # @socketio.on('join')
 # def on_join(room):
 #     print('User ' + current_user.username + ' has entered the room ' + room + '.')
@@ -50,11 +52,13 @@ def connect_handler():
 #     socketio.emit(username + ' has entered the room.', room=room)
 #
 
+
 @login_manager.user_loader
 def load_user(user_id):
     if user_id is not None:
         return User.query.get(user_id)
     return None
+
 
 @socketio.on('message')
 def handle_message(message_text):
@@ -75,7 +79,6 @@ def handle_message(message_text):
     socketio.emit('newMessage', message.to_dict(), include_self=False)
     print('emitted newMessage')
     return 'messageReceived'
-
 
 
 @socketio.on('getHistory')
