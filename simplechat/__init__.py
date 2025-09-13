@@ -1,14 +1,10 @@
 import os
+from dotenv import load_dotenv
 
 from flask import Flask
 from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
-
-from dotenv import load_dotenv
-
-import eventlet
-eventlet.monkey_patch()
 
 
 socketio = SocketIO(manage_sessions=False, cors_allowed_origins='*', async_mode='eventlet')
@@ -46,4 +42,3 @@ def create_app():
         db.create_all()
 
         return app
-
