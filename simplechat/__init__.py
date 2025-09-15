@@ -20,7 +20,7 @@ def create_app():
         raise ValueError('SECRET_KEY is not set in .env')
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URI', 'sqlite:///db.sqlite')
 
     db.init_app(app)
     login_manager.init_app(app)
