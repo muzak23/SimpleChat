@@ -58,22 +58,22 @@ function formatTime(epoch) {
     let today = new Date();
 
     // is it today
-    let isToday = sameDay(message_date, today)
+    let isToday = sameDay(message_date, today);
+
     // is it yesterday
-    today.setDate(message_date.setDate(message_date.getDate()+1))
-    let isYesterday = sameDay(message_date, today)
+    let yesterday = new Date(message_date);
+    yesterday.setDate(yesterday.getDate() + 1);
+    let isYesterday = sameDay(yesterday, today);
 
     // Format example:   1:12 PM
-    let time = (message_date.getHours() > 12 ? message_date.getHours() - 12 : message_date.getHours()) + ":" + message_date.getMinutes() + " " + (message_date.getHours() >= 12 ? "PM" : "AM");
+    let time = message_date.getHours() % 12 + ":" + String(message_date.getMinutes()).padStart(2, "0") + " " + (message_date.getHours() >= 12 ? "PM" : "AM");
 
     if (isToday) {
         return "Today at " + time;
-    }
-    else if (isYesterday) {
+    } else if (isYesterday) {
         return "Yesterday at " + time;
-    }
-    else {
-        return message_date.getDay() + "/" + message_date.getMonth() + "/" + message_date.getFullYear() + " at " + time;
+    } else {
+        return (message_date.getMonth() + 1) + "/" + message_date.getDate() + "/" + message_date.getFullYear() + " at " + time;
     }
 }
 
@@ -172,6 +172,10 @@ socket.on('newMessage', function(data) {
 // }
 
 function onMessageSubmit(evt) {
+    if (document.getElementById('message').value === '') {
+        evt.preventDefault();
+        return false;
+    }
     let message = document.getElementById('message').value;
     let full_message = {
         'username': localStorage.getItem('username'),
@@ -301,4 +305,8 @@ function logout() {
     socket.emit('logout', function (data) {
         console.log('logout returns', data)
     });
+    localStorage.removeItem('username');
+    socket.disconnect();
+    const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+    loginModal.show();
 }
