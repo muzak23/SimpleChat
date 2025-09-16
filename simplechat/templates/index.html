@@ -11,7 +11,7 @@
     <div class="roomselect">
         <label for="room">Room:</label>
         <input type="text" id="room" name="room">
-        <input type="button" onclick="location.href='{{ url_for('main.index', _external=True) }}' + document.getElementById('room').value;" value="Go to room"/>
+        <input type="button" onclick="location.href='{{ url_for('main.index') }}' + document.getElementById('room').value;" value="Go to room"/>
     </div>
 </body>
 </html>
