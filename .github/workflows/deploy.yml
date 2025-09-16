@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  AWS_REGION: us-east-1
+  AWS_REGION: us-east-2
   ECR_REPOSITORY: nommensen/chat
   ECS_SERVICE: chat-service-f1n3u8mm
   ECS_CLUSTER: ambitious-frog-8qbgm3
