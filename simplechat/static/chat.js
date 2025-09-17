@@ -174,7 +174,7 @@ socket.on('newMessage', function(data) {
 function onMessageSubmit(evt) {
     if (document.getElementById('message').value === '') {
         evt.preventDefault();
-        return false;
+        return;
     }
     let message = document.getElementById('message').value;
     let full_message = {
@@ -204,7 +204,6 @@ function onMessageSubmit(evt) {
             new_message.children[1].children[1].children[0].style.color = 'black';
         }
     });
-    return false;
 }
 
 /**
