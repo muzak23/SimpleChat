@@ -9,74 +9,67 @@
 {% endblock %}
 
 <section style="background-color: #eee;">
-  <div class="container py-5">
+  <div class="container py-5" style="height: 100vh; display: flex; align-items: center; justify-content: center;">
+    <div class="row d-flex justify-content-center" style="width: 100%; height: 100%;">
+      <div class="col-12" style="height: 100%;">
+        <div class="card" id="chat2" style="height: 100%; display: flex; flex-direction: column;">
+          <div class="card-header d-flex justify-content-between align-items-center p-3">
+            <h5 class="mb-0">{{ room }} Chatroom</h5>
+            <div class="d-flex align-items-center">
+              <div class="mb-0 text-muted me-2" id="login-status">
+                {% if current_user.is_authenticated %}
+                  Logged in as <b>{{ current_user.username }}</b>
+                {% endif %}
+              </div>
+              <button type="button" class="btn btn-secondary btn-sm" data-mdb-ripple-color="dark" onclick="logout()">Log Out</button>
+            </div>
+          </div>
+          <div id="messages" class="card-body overflow-auto" data-mdb-perfect-scrollbar="true" onscroll="onScroll()"
+               style="flex: 1 1 auto; min-height: 0; padding-bottom: 0">
 
-    <div class="row d-flex justify-content-center">
-      <div class="col-12">
-
-<div class="card" id="chat2">
-  <div class="card-header d-flex justify-content-between align-items-center p-3">
-    <h5 class="mb-0">{{ room }} Chatroom</h5>
-    <div class="d-flex align-items-center">
-      <div class="mb-0 text-muted me-2" id="login-status">
-        {% if current_user.is_authenticated %}
-          Logged in as <b>{{ current_user.username }}</b>
-        {% endif %}
+        {#    <div class="d-flex flex-row justify-content-start">#}
+        {#      <img src="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50"#}
+        {#        alt="avatar 1" style="width: 45px; height: 100%;" class="rounded">#}
+        {#      <div>#}
+        {#        <p class="small p-2 ms-3 mb-1 rounded-3" style="background-color: #d7d7d7;">Hi</p>#}
+        {#        <p class="small ms-3 mb-3 rounded-3 text-muted">23:58</p>#}
+        {#        </div>#}
+        {#    </div>#}
+          </div>
+          <div class="card-footer d-flex align-items-center" style="gap: 0.5rem;">
+            <form id="messageForm" class="d-flex flex-grow-1 align-items-center" style="width: 100%;">
+                <input class="form-control flex-grow-1" id="message" type="text" placeholder="Type your message here..."
+                       autocomplete="off" style="margin-right: 0.5rem;" />
+                <input class="btn btn-primary" type="submit" value="Send" />
+            </form>
+          </div>
+        {#<div class="container">#}
+        {#    <div class="row-9">#}
+        {#        <div id="messages" class="chat_stream">#}
+        {#        </div>#}
+        {#        <div class="send_message">#}
+        {#            {% if current_user.is_authenticated %}#}
+        {#            <p>Sending message as <b>{{ current_user.username }}</b></p>#}
+        {#            {% endif %}#}
+        {#            <form id="messageForm">#}
+        {#                <input id="message" type="text" />#}
+        {#                <input class="btn btn-primary" type="submit" value="Send" />#}
+        {#            </form>#}
+        {#        </div>#}
+        {#    </div>#}
+        {#    #}
+        {#    <div class="row-3">#}
+        {#        <div class="chat_users">#}
+        {#            <h3>Users in {{ room }}:</h3>#}
+        {#            <ul>#}
+        {#                <li>Logan</li>#}
+        {#            </ul>#}
+        {#        </div>#}
+        {#    </div>#}
+        </div>
       </div>
-      <button type="button" class="btn btn-secondary btn-sm" data-mdb-ripple-color="dark" onclick="logout()">Log Out</button>
     </div>
   </div>
-  <div id="messages" class="card-body overflow-auto" data-mdb-perfect-scrollbar="true" onscroll="onScroll()" style="position: relative; height: 400px">
-
-{#    <div class="d-flex flex-row justify-content-start">#}
-{#      <img src="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50"#}
-{#        alt="avatar 1" style="width: 45px; height: 100%;" class="rounded">#}
-{#      <div>#}
-{#        <p class="small p-2 ms-3 mb-1 rounded-3" style="background-color: #d7d7d7;">Hi</p>#}
-{#        <p class="small ms-3 mb-3 rounded-3 text-muted">23:58</p>#}
-{#        </div>#}
-{#    </div>#}
-  </div>
-<div class="card-footer">
-        <div class="input-group">
-            <form id="messageForm" class="row">
-                    <div class="col-11">
-                        <input class="form-control" id="message" type="text" placeholder="Type your message here..."
-                               autocomplete="off"/>
-                    </div>
-                    <div class="col-1">
-                        <input class="btn btn-primary" type="submit" value="Send"/>
-                    </div>
-            </form>
-        </div>
-</div>
-{#<div class="container">#}
-{#    <div class="row-9">#}
-{#        <div id="messages" class="chat_stream">#}
-{#        </div>#}
-{#        <div class="send_message">#}
-{#            {% if current_user.is_authenticated %}#}
-{#            <p>Sending message as <b>{{ current_user.username }}</b></p>#}
-{#            {% endif %}#}
-{#            <form id="messageForm">#}
-{#                <input id="message" type="text" />#}
-{#                <input class="btn btn-primary" type="submit" value="Send" />#}
-{#            </form>#}
-{#        </div>#}
-{#    </div>#}
-{#    #}
-{#    <div class="row-3">#}
-{#        <div class="chat_users">#}
-{#            <h3>Users in {{ room }}:</h3>#}
-{#            <ul>#}
-{#                <li>Logan</li>#}
-{#            </ul>#}
-{#        </div>#}
-{#    </div>#}
-</div>
-</div>
-</div>
-</div>
 </section>
 </body>
 {% endblock %}

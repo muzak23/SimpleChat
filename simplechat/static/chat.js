@@ -1,10 +1,11 @@
+let chatStream;
 /**
  * Once the DOM is loaded, get the chat stream element and add an event
  * listener to the message send button
  * @param evt  The DOMContentLoaded event
  */
 function onDOMContentLoaded(evt) {
-    let chatStream = document.getElementById('messages');
+    chatStream = document.getElementById('messages');
     document.getElementById('messageForm').addEventListener('submit', onMessageSubmit, false);
     attemptConnect();
 }
@@ -99,8 +100,8 @@ function createMessageHTML(msg, isSelf = false) {
     let img = document.createElement('img');
     img.src = 'https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50';
     img.alt = 'User Avatar';
-    img.style = 'width: 45px; height: 100%;';
-    img.className = 'rounded align-self-center';
+    img.style = 'width: 52px; height: 100%; margin-top: 6px;';
+    img.className = 'rounded';
     html.appendChild(img);
 
     let div = document.createElement('div');
@@ -253,14 +254,6 @@ function showHistory(before=undefined, after=undefined) {
                 showMsg(msg)
             }
         }
-    })
-}
-
-function getUsername(id) {
-    console.log('getting user', id)
-    socket.emit('getUsername', id, function (data) {
-        console.log('getUsername returns', data)
-        return data
     })
 }
 
