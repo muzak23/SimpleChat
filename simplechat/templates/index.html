@@ -22,10 +22,9 @@
                     <h3 class="heading-font mb-4">Join a Chatroom</h3>
                     <form id="roomForm">
                         <div class="mb-3">
-                            <input type="text" class="form-control room-input" id="roomName"
-                                   placeholder="Enter your chatroom name..." required>
-                            <div class="url-preview mt-2">
-                                <span class="text-muted">chat.nommensen.dev/</span><span id="urlPreview">your-room-name</span>
+                            <div class="url-input-container">
+                                <span class="url-prefix text-muted">chat.nommensen.dev/</span>
+                                <input type="text" class="url-input" id="roomName" placeholder="your-room-name" required>
                             </div>
                         </div>
                         <button type="submit" class="btn join-btn w-100">
@@ -113,19 +112,12 @@
     const urlPreview = document.getElementById('urlPreview');
 
     roomInput.addEventListener('input', function() {
-        const roomName = this.value.toLowerCase()
-            .replace(/[^a-z0-9]/g, '-')
-            .replace(/-+/g, '-')
-            .replace(/(^-|-$)/g, '');
-        urlPreview.textContent = roomName || 'your-room-name';
+        this.value = this.value.toLowerCase().replace(/ /g, '-');
     });
 
     document.getElementById('roomForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        const roomName = roomInput.value.toLowerCase()
-            .replace(/[^a-z0-9]/g, '-')
-            .replace(/-+/g, '-')
-            .replace(/(^-|-$)/g, '');
+        const roomName = roomInput.value.replace(/(^-+)|(-+$)/g, '');  // Trim hyphens on ends
         if (roomName) {
             window.location.href = `/${roomName}`;
         }

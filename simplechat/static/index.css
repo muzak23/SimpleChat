@@ -117,15 +117,37 @@ body {
     transition: color 0.3s ease, transform 0.3s ease;
 }
 
-.url-preview {
-    font-family: 'Monaco', 'Menlo', monospace;
+
+.url-input-container {
+    display: flex;
+    align-items: center;
     background-color: var(--input);
-    padding: 0.5rem 1rem;
+    border: 2px solid var(--border);
     border-radius: var(--radius);
-    border: 1px solid var(--border);
-    color: var(--muted);
-    font-size: 0.9rem;
-    margin-top: 1rem;
+    transition: all 0.3s ease;
+    padding: 0 1.5rem;
+}
+
+.url-input-container:focus-within {
+    border-color: var(--ring);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+    background-color: var(--background);
+}
+
+.url-prefix {
+    font-family: 'Monaco', 'Menlo', monospace;
+    font-size: 1.1rem;
+    padding-right: 0.5rem;
+}
+
+.url-input {
+    background-color: transparent;
+    border: none;
+    outline: none;
+    font-size: 1.1rem;
+    padding: 1rem 0;
+    width: 100%;
+    color: var(--foreground);
 }
 
 .brand-logo {
