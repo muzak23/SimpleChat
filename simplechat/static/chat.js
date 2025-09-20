@@ -4,7 +4,7 @@
  * @param evt  The DOMContentLoaded event
  */
 function onDOMContentLoaded(evt) {
-    chatStream = document.getElementById('messages');
+    let chatStream = document.getElementById('messages');
     document.getElementById('messageForm').addEventListener('submit', onMessageSubmit, false);
     attemptConnect();
 }
@@ -37,11 +37,10 @@ function attemptConnect() {
 
 function scrollToBottom() {
     const out = document.getElementById("messages");
-    // messages.scrollTop = messages.scrollHeight - messages.getBoundingClientRect().height;
     out.scrollTop = out.scrollHeight - out.clientHeight;
 }
 
-currentRoom = '';
+let currentRoom = '';
 function sameDay(date1, date2) {
     return date1.getFullYear() === date2.getFullYear() &&
     date1.getMonth() === date2.getMonth() &&
@@ -142,7 +141,7 @@ function createMessageHTML(msg, isSelf = false) {
 function showMsg(msg, atTop = false) {
     let messages = document.getElementById('messages');
     if (atTop) {
-        scrollTop = messages.scrollTop;
+        let scrollTop = messages.scrollTop;
         messages.prepend(createMessageHTML(msg));
         messages.scrollTop = scrollTop + messages.children[0].getBoundingClientRect().height;
         return;
@@ -166,10 +165,6 @@ socket.on('newMessage', function(data) {
     console.log('newMessage', data);
     showMsg(data);
 });
-
-// function sendMessage(message) {
-//     socket.emit('message', message);
-// }
 
 function onMessageSubmit(evt) {
     if (document.getElementById('message').value === '') {
@@ -257,9 +252,6 @@ function showHistory(before=undefined, after=undefined) {
             for (const msg of data.reverse()) {
                 showMsg(msg)
             }
-            // if (data.length < 20) {
-            //     reachedLimit();
-            // }
         }
     })
 }

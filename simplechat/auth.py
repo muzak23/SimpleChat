@@ -26,7 +26,7 @@ NAMES_NOUN = ['Lynx', 'Octopus', 'Duck', 'Platypus', 'Toad', 'Squirrel', 'Deer',
 
 
 @auth.route('/generateRandomName', methods=['GET'])
-def handle_generateRandomName():
+def handle_generate_random_name():
     return random.choice(NAMES_ADJECTIVE) + ' ' + random.choice(NAMES_NOUN)
 
 

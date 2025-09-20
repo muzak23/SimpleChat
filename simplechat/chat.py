@@ -82,7 +82,7 @@ def handle_message(message_text):
 
 
 @socketio.on('getHistory')
-def handle_getHistory(before=None, after=None):
+def handle_get_history(before=None, after=None):
     print('getting history')
     if before:
         print('before' + str(before))
@@ -99,12 +99,12 @@ def handle_getHistory(before=None, after=None):
 
 
 @socketio.on('getUsername')
-def handle_getUser(id):
+def handle_get_user(id):
     return str(User.query.get(id).username)
 
 
 @socketio.on('newUser')
-def handle_newUser(username):
+def handle_new_user(username):
     user = User(username=username)
     db.session.add(user)
     db.session.commit()
