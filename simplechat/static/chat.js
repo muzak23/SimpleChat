@@ -172,10 +172,13 @@ function onMessageSubmit(evt) {
         evt.preventDefault();
         return;
     }
-    let message = document.getElementById('message').value;
+    let message_data = {
+        'message': document.getElementById('message').value,
+        'room': currentRoom
+    };
     let full_message = {
         'username': localStorage.getItem('username'),
-        'text': message,
+        'text': message_data['message'],
         'timestamp': Date.now() / 1000
     }
     let messages = document.getElementById('messages');
@@ -186,7 +189,7 @@ function onMessageSubmit(evt) {
     evt.preventDefault();
 
     scrollToBottom();
-    socket.timeout(5000).emit('message', message, function (err, callback) {
+    socket.timeout(5000).emit('message', message_data, function (err, callback) {
         if (err || callback === 'invalidMessage') {
             console.log('message error', err, callback);
             new_message.children[1].children[1].children[0].style.color = 'red';
@@ -219,7 +222,8 @@ function reachedLimit(top=false, remove=false) {
         let limit = document.createElement('div');
         limit.className = 'text-center';
         limit.id = 'limit';
-        limit.textContent = 'This is the beginning of the chat history';
+
+        limit.textContent = 'This is the beginning of ' + currentRoom + '.';
         messages.prepend(limit);
     } else {
         messages.appendChild(limit);
@@ -232,7 +236,7 @@ function reachedLimit(top=false, remove=false) {
  * @param after The time to get messages after
  */
 function showHistory(before=undefined, after=undefined) {
-    socket.emit('getHistory', before, after, function (data) {
+    socket.emit('getHistory', currentRoom, before, after, function (data) {
         if (before === undefined && after === undefined) {
             for (const msg of data.reverse()) {
                 showMsg(msg)
