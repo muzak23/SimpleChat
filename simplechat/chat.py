@@ -47,7 +47,6 @@ def connect_handler():
 @socketio.on('join')
 def on_join(room):
     print('User ' + current_user.username + ' has entered the room ' + room + '.')
-    username = current_user.username
     join_room(room)
 #     socketio.emit(username + ' has entered the room.', room=room)
 #
