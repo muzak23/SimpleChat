@@ -12,9 +12,6 @@ from .models import User, Message, Room
 
 chat = Blueprint('chat', __name__)
 
-NAMES_ADJECTIVE = ['Adorable', 'Beautiful', 'Charming', 'Dazzling', 'Elegant', 'Fancy', 'Glamorous', 'Handsome', 'Magnificent', 'Sparkling', 'Aggressive', 'Agreeable', 'Ambitious', 'Brave', 'Calm', 'Delightful', 'Eager', 'Faithful', 'Gentle', 'Happy', 'Jolly', 'Kind', 'Lively', 'Nice', 'Obedient', 'Polite', 'Proud', 'Silly', 'Thankful', 'Victorious', 'Witty', 'Wise', 'Zealous', 'Bashful']
-NAMES_NOUN = ['Lynx', 'Octopus', 'Duck', 'Platypus', 'Toad', 'Squirrel', 'Deer', 'Rabbit', 'Hedgehog', 'Pig', 'Cat', 'Dog', 'Lion', 'Tiger', 'Bear', 'Wolf', 'Fox', 'Panda', 'Koala', 'Giraffe', 'Elephant', 'Rhino', 'Hippo', 'Zebra', 'Horse', 'Cow', 'Sheep', 'Goat', 'Chicken', 'Duck', 'Penguin', 'Owl', 'Frog', 'Snake', 'Lizard', 'Turtle', 'Fish', 'Shark', 'Whale', 'Dolphin', 'Seal', 'Otter', 'Monkey', 'Gorilla', 'Kangaroo', 'Raccoon', 'Mouse', 'Rat', 'Beaver', 'Sloth', 'Polar Bear', 'Panda', 'Koala', 'Giraffe', 'Elephant', 'Rhino', 'Hippo', 'Zebra', 'Horse', 'Cow', 'Sheep', 'Goat', 'Chicken', 'Duck', 'Penguin', 'Owl', 'Frog', 'Snake', 'Lizard', 'Turtle', 'Fish', 'Shark', 'Whale', 'Dolphin', 'Seal', 'Otter', 'Monkey', 'Gorilla', 'Kangaroo', 'Raccoon', 'Mouse', 'Rat', 'Beaver', 'Sloth', 'Polar Bear']
-
 
 @chat.route("/<room>")
 def room(room):
