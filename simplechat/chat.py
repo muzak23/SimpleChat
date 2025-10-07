@@ -15,6 +15,8 @@ chat = Blueprint('chat', __name__)
 
 @chat.route("/<room>")
 def room(room):
+    if len(room) > 32 or not room.isalnum():
+        return render_template('bad_request.html'), 400
     return render_template('room.html', room=room)
 
 

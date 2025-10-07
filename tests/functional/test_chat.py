@@ -17,7 +17,7 @@ def test_room_endpoint_long_room_name(client):
     """
     long_room_name = 'a' * 33  # 65 characters, exceeding the limit
     response = client.get(f'/{long_room_name}')
-    assert response.status_code == 404
+    assert response.status_code == 400
 
 
 def test_room_endpoint_special_characters_room_name(client):
@@ -27,4 +27,4 @@ def test_room_endpoint_special_characters_room_name(client):
     THEN check that a 404 status code is returned
     """
     response = client.get('/room!@#')
-    assert response.status_code == 404
+    assert response.status_code == 400
