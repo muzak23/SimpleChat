@@ -1,3 +1,4 @@
+import re
 from datetime import datetime
 
 from . import socketio
@@ -15,7 +16,7 @@ chat = Blueprint('chat', __name__)
 
 @chat.route("/<room>")
 def room(room):
-    if len(room) > 32 or not room.isalnum():
+    if len(room) > 32 or not re.match(r'^[A-Za-z0-9_-]+$', room):
         return render_template('bad_request.html'), 400
     return render_template('room.html', room=room)
 
